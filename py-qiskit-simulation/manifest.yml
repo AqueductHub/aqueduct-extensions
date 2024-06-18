@@ -1,0 +1,54 @@
+name: "Qiskit simulator"
+description: >
+  This extension simulates QASM v2 and v3
+  circuits with qiskit noisy and noiseless
+  backends
+authors: aqueduct@riverlane.com
+aqueduct_url: https://localhost:8000/
+
+actions:
+  - 
+    name: Simulate QASM circuit
+    description: >
+      Simulates QASM circuit with a selected
+      backend.
+
+    script: >
+      $python solve_alpha.py
+
+    # arguments of the action
+    parameters:
+      -
+        name: experiment
+        description: experiment where script is stored store result
+        data_type: experiment
+      - 
+        name: qasm_file
+        description: File with a QASM script
+        data_type: file
+      - 
+        name: simulator_type
+        description: Class name of the simulator
+        data_type: select
+        default_value: "Fake20QV1"
+        options: [ Fake5QV1, Fake20QV1, Fake7QPulseV1, StatevectorSimulator ]
+      -
+        name: qasm_version
+        description: Version of QASM dialect
+        data_type: select
+        default_value: "v2"
+        options: [ v2, v3 ]
+      -
+        name: memory
+        desciption: Save per-shot measurement results
+        data_type: bool
+        default_value: true
+      -
+        name: shots
+        description: Number of shots
+        data_type: int
+        default_value: 1000
+      - 
+        name: result_file
+        description: file name to store measurements
+        data_type: str

@@ -11,8 +11,9 @@ export aqueduct_url="http://localhost:8000/"
 
 export aqueduct_key=""
 export qasm_file=$(realpath tests/data/bell_state.qasm3)
-export simulator_class="Fake20QV1"
+export simulator_type="Fake20QV1"
 export qasm_version=3
+export memory=1
 export shots=2000
 
 # run

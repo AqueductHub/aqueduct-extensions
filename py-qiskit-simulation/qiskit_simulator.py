@@ -1,11 +1,15 @@
 import os
 from inspect import isclass
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from qiskit import QuantumCircuit, transpile
-import qiskit.qasm3
-import qiskit.providers.fake_provider
-import qiskit_aer.backends
 import numpy as np
+import qiskit.providers.fake_provider
+import qiskit.qasm3
+import qiskit_aer.backends
+from pyaqueduct import API
+from pyaqueduct.experiment import Experiment
+from qiskit import QuantumCircuit, transpile
 
 
 def simulate(
@@ -32,18 +36,75 @@ def simulate(
     backend_instance = backend()
     transpiled_circuit = transpile(circuit, backend_instance)
     result = backend_instance.run(transpiled_circuit, shots=shots, memory=save_shots).result()
-    print(result)
-    return result.get_memory()
+    print(result.get_counts())
+    if memory:
+        return result.get_memory()
+    else:
+        return []
+
+
+def get_file(api, experiment, name, directory) -> Path:
+    exp = api.get_experiment(experiment)
+    exp.download_file(
+        file_name=name,
+        destination_dir=directory,
+    )
+    return Path(directory) / name
+
+
+def save_to_aqueduct(
+        api: API,
+        content: np.array,
+        experiment_id: str,
+        filename: str,
+        directory: str,
+) -> None:
+    """Saves content string as a file in aqueduct
+    api (API): API of aqueduct
+    content (np.array): array to save
+    experiment_id (str):
+        ID of the experiment where the file will be saved
+    filename (str):
+        name of the resulting file
+    directory (str): temp dir
+    """
+    exp = api.get_experiment(experiment_id)
+    fullname = Path(directory) / filename
+    with open(fullname, "w") as file:
+        for line in content:
+            file.write("".join(map(str, map(int, line))))
+            file.write("\n")
+    exp.upload_file(str(fullname))
+
+
 
 if __name__ == "__main__":
-    filename = os.environ.get("qasm_file", "")
-    simulator_class = os.environ.get("simulator_class", "")
+    qasm_filename = os.environ.get("qasm_file", "")
+    simulator_type = os.environ.get("simulator_type", "")
     qasm_version = int(os.environ.get("qasm_version", "2"))
     shots = int(os.environ.get("shots", "1000"))
-    measurements = simulate(
-        filename,
-        simulator_class,
-        shots,
-        qasm_version=qasm_version,
-        save_shots=True
-    )
+    memory = int(os.environ.get("memory", "0")) == 1
+
+    aq_url = os.environ.get("aqueduct_url", "")
+    aq_key = os.environ.get("aqueduct_key", "")
+
+    experiment_id = os.environ.get("experiment", "")
+    filename = os.environ.get("result_file", "")
+
+    api = API(url=aq_url, timeout=10)
+    with TemporaryDirectory() as directory:
+        qasm_file = get_file(api, experiment_id, qasm_filename, directory)
+        measurements = simulate(
+            str(qasm_file),
+            simulator_type,
+            shots,
+            qasm_version=qasm_version,
+            save_shots=memory,
+        )
+        save_to_aqueduct(
+            api,
+            measurements,
+            experiment_id=experiment_id,
+            filename=filename,
+            directory=directory,
+        )
