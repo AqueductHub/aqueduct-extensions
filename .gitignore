@@ -162,4 +162,5 @@ cython_debug/
 #.idea/
 
 # project specific
-.aqueduct-extension-venv/
+.ext-venv/
+*/.aqueduct-extension-dev/
