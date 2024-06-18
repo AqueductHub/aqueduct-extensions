@@ -37,7 +37,7 @@ def simulate(
     transpiled_circuit = transpile(circuit, backend_instance)
     result = backend_instance.run(transpiled_circuit, shots=shots, memory=save_shots).result()
     print(result.get_counts())
-    if memory:
+    if save_shots:
         return result.get_memory()
     else:
         return []
