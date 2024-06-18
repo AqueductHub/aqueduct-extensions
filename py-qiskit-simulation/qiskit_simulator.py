@@ -31,10 +31,19 @@ def simulate(
         raise NotImplementedError(f"Backend {backend_name} is not found in Qiskit.")
     backend_instance = backend()
     transpiled_circuit = transpile(circuit, backend_instance)
-    print(backend_instance.run(transpiled_circuit, shots=shots, memory=save_shots).result())
+    result = backend_instance.run(transpiled_circuit, shots=shots, memory=save_shots).result()
+    print(result)
+    return result.get_memory()
 
 if __name__ == "__main__":
     filename = os.environ.get("qasm_file", "")
     simulator_class = os.environ.get("simulator_class", "")
+    qasm_version = int(os.environ.get("qasm_version", "2"))
     shots = int(os.environ.get("shots", "1000"))
-    simulate(filename, simulator_class, shots, save_shots=True)
+    measurements = simulate(
+        filename,
+        simulator_class,
+        shots,
+        qasm_version=qasm_version,
+        save_shots=True
+    )
