@@ -11,7 +11,7 @@ export aqueduct_url="https://aqueduct-demo.azurewebsites.net/"
 
 export aqueduct_key=""
 export qasm_file="bell_state.qasm"
-export simulator_type="Fake20QV1"
+export simulator_type="QasmSimulator"
 export qasm_version=2
 export shots=2000
 export experiment="20240618-1"
