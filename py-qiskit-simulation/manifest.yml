@@ -42,7 +42,7 @@ actions:
         options: [ v2, v3 ]
       -
         name: memory
-        desciption: Save per-shot measurement results
+        description: Save per-shot measurement results
         data_type: bool
         default_value: true
       -
