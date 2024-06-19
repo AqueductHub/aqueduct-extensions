@@ -4,7 +4,7 @@ description: >
   circuits with qiskit noisy and noiseless
   backends
 authors: aqueduct@riverlane.com
-aqueduct_url: https://localhost:8000/
+aqueduct_url: http://localhost:8000/
 
 actions:
   - 
