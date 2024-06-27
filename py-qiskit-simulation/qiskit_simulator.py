@@ -45,7 +45,7 @@ def simulate(
     else:
         raise NotImplementedError(
             f"QASM version {qasm_version} is not supported in this extension")
-    print(f"Cicuit {qasm_circuit_filename} successfully parsed with OpenQASM{qasm_version}")
+    print(f"Circuit {qasm_circuit_filename} successfully parsed with OpenQASM{qasm_version}")
 
     # to report shots in little-endians style, like STIM
     circuit = circuit.reverse_bits()
@@ -108,7 +108,7 @@ def save_to_aqueduct(
 if __name__ == "__main__":
     aq_url = os.environ.get("aqueduct_url", "")
     aq_key = os.environ.get("aqueduct_key", "")
-    print(f"Aquduct server: {aq_url}")
+    print(f"Aqueduct server: {aq_url}")
 
     experiment_id = os.environ.get("experiment", "")
     qasm_filename = os.environ.get("qasm_file", "")
