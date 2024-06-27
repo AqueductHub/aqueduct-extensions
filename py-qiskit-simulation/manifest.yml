@@ -14,7 +14,7 @@ actions:
       backend.
 
     script: >
-      $python solve_alpha.py
+      $python qiskit_simulator.py
 
     # arguments of the action
     parameters:
