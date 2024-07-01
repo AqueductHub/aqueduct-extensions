@@ -30,10 +30,14 @@ actions:
         name: simulator_type
         description: Class name of the simulator
         data_type: select
-        default_value: "Fake20QV1"
-        options: [Fake5QV1, Fake7QPulseV1, Fake20QV1,
+        default_value: "AerSimulator"
+        # NB, AerSimulator is the only supporting
+        # classic feedback, i.e. c_if instructions.
+        options: [AerSimulator, StatevectorSimulator, 
+                  QasmSimulator, UnitarySimulator,
+                  Fake5QV1, Fake7QPulseV1, Fake20QV1,
                   Fake27QPulseV1, Fake127QPulseV1,
-                  StatevectorSimulator, QasmSimulator, UnitarySimulator]
+                 ]
       -
         name: qasm_version
         description: Version of QASM dialect
