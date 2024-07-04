@@ -68,7 +68,7 @@ def simulate(
         shots=shots,
         memory=save_shots
     ).result()
-    print(result.get_counts())
+    print(f"Aggregated mesurements: {result.get_counts()}")
     return result.get_memory() if save_shots else []
 
 
