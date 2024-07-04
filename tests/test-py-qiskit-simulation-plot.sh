@@ -9,16 +9,11 @@ $venv/bin/pip install -r $extension/requirements.txt
 
 export aqueduct_url="https://aqueduct-demo.azurewebsites.net/"
 
-export qasm_file="bell_state.qasm3"
-export simulator_type="AerSimulator"
-export qasm_version="v3"
-export memory=1
-export experiment="20240618-1"
-export result_file="measurements.01"
-export shots=2000
+export width=400
+export height=500
 
 # run
-$venv/bin/python $extension/qiskit_simulator.py
+$venv/bin/python $extension/plot_shots.py
 code=$?
 echo "Result code: $code"
 exit $code

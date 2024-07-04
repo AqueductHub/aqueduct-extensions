@@ -9,7 +9,6 @@ $venv/bin/pip install -r $extension/requirements.txt
 
 export aqueduct_url="https://aqueduct-demo.azurewebsites.net/"
 
-export aqueduct_key=""
 export qasm_file="bell_state.qasm"
 export simulator_type="QasmSimulator"
 export qasm_version="v2"

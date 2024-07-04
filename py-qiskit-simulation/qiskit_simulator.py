@@ -1,8 +1,8 @@
 import os
-from typing import Iterable
 from inspect import isclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Iterable
 
 import qiskit.providers.fake_provider
 import qiskit.qasm3
@@ -18,8 +18,8 @@ def simulate(
         save_shots: bool = False,
         qasm_version: str = "v2",
 ):
-    """Simulates the circuit with a provided backend class name.
-    Class names are taken from `qiskit.providers.fake_provider`
+    """Simulate the circuit with a provided backend class name.
+    Classes names are taken from `qiskit.providers.fake_provider`
     and `qiskit_aer.backends`.
 
     Args:
@@ -45,36 +45,59 @@ def simulate(
     else:
         raise NotImplementedError(
             f"QASM version {qasm_version} is not supported in this extension")
-    print(f"Circuit {qasm_circuit_filename} successfully parsed with OpenQASM{qasm_version}")
-
-    # to report shots in little-endians style, like STIM
+    # to report shots in little-endians style, like in STIM
     circuit = circuit.reverse_bits()
+    print(
+        f"Circuit {qasm_circuit_filename} successfully "
+        f"parsed with OpenQASM{qasm_version}."
+    )
+    
     backends = dict(vars(qiskit.providers.fake_provider))
     backends.update(vars(qiskit_aer.backends))
+    # from these namespaces, keep only classes
     backends = {k: v for k, v in backends.items() if isclass(v)}
     backend = backends.get(backend_name, None)
     print(f"Backend class for {backend_name}: {backend}")
-
     if not backend:
         raise NotImplementedError(f"Backend {backend_name} is not found in Qiskit.")
+
     backend_instance = backend()
     transpiled_circuit = transpile(circuit, backend_instance)
-    result = backend_instance.run(transpiled_circuit, shots=shots, memory=save_shots).result()
-    if save_shots:
-        return result.get_memory()
-    else:
-        return []
+    result = backend_instance.run(
+        transpiled_circuit,
+        shots=shots,
+        memory=save_shots
+    ).result()
+    return result.get_memory() if save_shots else []
 
 
-def get_file(api, experiment, name, directory) -> Path:
-    exp = api.get_experiment(experiment)
+def get_file(
+        api: API,
+        experiment_id: str,
+        filename: str,
+        directory: str
+    ) -> Path:
+    """Download a file to a local file system 
+    from the Aqueduct.
+
+    Args:
+        api (A): Aqueduct API object
+        experiment_id (str): experiment ID
+        filename (str): file name in the experiment
+        directory (str): destination directory
+
+    Returns:
+        Path: path to a downloaded file
+    """
+    exp = api.get_experiment_by_eid(experiment_id)
     print(f"Source experiment: {exp}")
     exp.download_file(
-        file_name=name,
+        file_name=filename,
         destination_dir=directory,
     )
-    print(f"File downloaded successfully: {Path(directory) / name}")
-    return Path(directory) / name
+    path = Path(directory) / filename
+    print(f"File downloaded successfully: {path}")
+    return path
 
 
 def save_to_aqueduct(
@@ -93,7 +116,7 @@ def save_to_aqueduct(
         name of the resulting file
     directory (str): temporary directory.
     """
-    exp = api.get_experiment(experiment_id)
+    exp = api.get_experiment_by_eid(experiment_id)
     print(f"Destination experiment: {exp}")
     fullname = Path(directory) / filename
     with open(fullname, "w") as file:
@@ -107,8 +130,6 @@ def save_to_aqueduct(
 
 if __name__ == "__main__":
     aq_url = os.environ.get("aqueduct_url", "")
-    aq_key = os.environ.get("aqueduct_key", "")
-    print(f"Aqueduct server: {aq_url}")
 
     experiment_id = os.environ.get("experiment", "")
     qasm_filename = os.environ.get("qasm_file", "")
@@ -119,7 +140,8 @@ if __name__ == "__main__":
     shots = int(os.environ.get("shots", "1000"))
     memory = int(os.environ.get("memory", "0")) == 1
 
-    # TODO add key support
+    # API token is passed directly for environment varible
+    # $API_TOKEN
     api = API(url=aq_url, timeout=2)
 
     with TemporaryDirectory() as directory:

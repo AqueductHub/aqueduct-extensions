@@ -58,3 +58,41 @@ actions:
         name: result_file
         description: file name to store measurements
         data_type: str
+  -
+    name: Plot measurement shot distribution
+    description: >
+      Plots a classic Qiskit histogam with 
+      shots distribution
+
+    script: >
+      $python plot_shots.py
+
+    # arguments of the action
+    parameters:
+      -
+        name: experiment
+        description: experiment where script is stored store result
+        data_type: experiment
+      - 
+        name: shots_file
+        description: File with a Measurement shots
+        data_type: file
+      - 
+        name: dense_layout
+        description: skip 0-frequency states
+        data_type: bool
+        default_value: true
+      -
+        name: width
+        description: width in pixels
+        data_type: int
+        default_value: 1000
+      -
+        name: height
+        description: height in pixels
+        data_type: int
+        default_value: 800
+      - 
+        name: image_file
+        description: file name to store histogram
+        data_type: str
