@@ -7,13 +7,13 @@ rm -r $venv
 python -m venv $venv
 $venv/bin/pip install -r $extension/requirements.txt
 
-export aqueduct_url="https://aqueduct-demo.azurewebsites.net/"
+export aqueduct_url="http://localhost:8000/"
 
 export qasm_file="bell_state.qasm3"
 export simulator_type="AerSimulator"
 export qasm_version="v3"
 export memory=1
-export experiment="20240618-1"
+export experiment="20240705-3"
 export result_file="measurements.01"
 export shots=2000
 

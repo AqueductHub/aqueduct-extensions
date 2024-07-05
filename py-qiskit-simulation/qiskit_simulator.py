@@ -1,8 +1,6 @@
 import os
 from inspect import isclass
-from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Iterable
 
 import qiskit.providers.fake_provider
 import qiskit.qasm3
@@ -10,6 +8,7 @@ import qiskit_aer.backends
 from pyaqueduct import API
 from qiskit import QuantumCircuit, transpile
 
+from files import get_file_from_aqueduct, save_content_to_aqueduct
 
 def simulate(
         qasm_circuit_filename: str,
@@ -72,63 +71,6 @@ def simulate(
     return result.get_memory() if save_shots else []
 
 
-def get_file(
-        api: API,
-        experiment_id: str,
-        filename: str,
-        directory: str
-    ) -> Path:
-    """Download a file to a local file system 
-    from the Aqueduct.
-
-    Args:
-        api (A): Aqueduct API object
-        experiment_id (str): experiment ID
-        filename (str): file name in the experiment
-        directory (str): destination directory
-
-    Returns:
-        Path: path to a downloaded file
-    """
-    exp = api.get_experiment_by_eid(experiment_id)
-    print(f"Source experiment: {exp}")
-    exp.download_file(
-        file_name=filename,
-        destination_dir=directory,
-    )
-    path = Path(directory) / filename
-    print(f"File downloaded successfully: {path}")
-    return path
-
-
-def save_to_aqueduct(
-        api: API,
-        content: Iterable,
-        experiment_id: str,
-        filename: str,
-        directory: str,
-) -> None:
-    """Saves content string as a file in aqueduct
-    api (API): API of Aqueduct.
-    content (Iterable): array to save.
-    experiment_id (str):
-        ID of the experiment where the file will be saved
-    filename (str):
-        name of the resulting file
-    directory (str): temporary directory.
-    """
-    exp = api.get_experiment_by_eid(experiment_id)
-    print(f"Destination experiment: {exp}")
-    fullname = Path(directory) / filename
-    with open(fullname, "w") as file:
-        for line in content:
-            # double convertation for the case of np.ndarray
-            file.write("".join(map(str, map(int, line))))
-            file.write("\n")
-    print(f"Uploading file {fullname}")
-    exp.upload_file(str(fullname))
-
-
 if __name__ == "__main__":
     aq_url = os.environ.get("aqueduct_url", "")
 
@@ -147,7 +89,7 @@ if __name__ == "__main__":
 
     with TemporaryDirectory() as directory:
         print(f"Downloading circuit file {qasm_filename}")
-        qasm_file_path = get_file(
+        qasm_file_path = get_file_from_aqueduct(
             api, experiment_id, qasm_filename, directory)
         print("Starting simulation.")
         measurements = simulate(
@@ -159,7 +101,7 @@ if __name__ == "__main__":
         )
         if memory:
             print(f"Saving shots to Aqueduct experiment {experiment_id}.")
-            save_to_aqueduct(
+            save_content_to_aqueduct(
                 api=api,
                 content=measurements,
                 experiment_id=experiment_id,

@@ -10,8 +10,24 @@ actions:
   - 
     name: Simulate QASM circuit
     description: >
-      Simulates QASM circuit with a selected
-      backend.
+      This action runs a QASM circuit on a selected simulator backend.
+      Simulation results are printed in little-endians format
+      and are compatible with STIM 01 measurements file format.
+
+      There are 4 ideal simulators which represent
+      noiseless backends: AerSimulator,
+      StatevectorSimulator, QasmSimulator, UnitarySimulator.
+      Note, that AerSimulator is the only simulator, which supports
+      classical feedback (i.e. conditinal gates, like c_if()).
+      There are also 5 noisy simulators, which represent real
+      quantum computers (their connectivity maps, native gates,
+      and noise models): Fake5QV1, Fake7QPulseV1, Fake20QV1,
+      Fake27QPulseV1, and Fake127QPulseV1. You will find read more about
+      these simulators in the official qiskit documentation page
+      https://docs.quantum.ibm.com/api/qiskit/providers_fake_provider.
+      Corresponding QPU configurations are available in qiskit source
+      code:
+      https://github.com/Qiskit/qiskit/tree/stable/1.1/qiskit/providers/fake_provider/backends_v1
 
     script: >
       $python qiskit_simulator.py
@@ -20,7 +36,7 @@ actions:
     parameters:
       -
         name: experiment
-        description: experiment where script is stored store result
+        description: experiment with the data
         data_type: experiment
       - 
         name: qasm_file
@@ -28,7 +44,7 @@ actions:
         data_type: file
       - 
         name: simulator_type
-        description: Class name of the simulator
+        description: Class name of a simulator
         data_type: select
         default_value: "AerSimulator"
         # NB, AerSimulator is the only supporting
@@ -40,13 +56,13 @@ actions:
                  ]
       -
         name: qasm_version
-        description: Version of QASM dialect
+        description: Version of a QASM dialect
         data_type: select
         default_value: "v2"
         options: [ v2, v3 ]
       -
         name: memory
-        description: Save per-shot measurement results
+        description: Save per-shot measurement results?
         data_type: bool
         default_value: true
       -
@@ -56,13 +72,13 @@ actions:
         default_value: 1000
       - 
         name: result_file
-        description: file name to store measurements
+        description: file name to store measurements in, 01 format
         data_type: str
   -
     name: Plot measurement shot distribution
     description: >
       Plots a classic Qiskit histogam with 
-      shots distribution
+      shots distribution.
 
     script: >
       $python plot_shots.py
@@ -71,17 +87,12 @@ actions:
     parameters:
       -
         name: experiment
-        description: experiment where script is stored store result
+        description: experiment with the data
         data_type: experiment
       - 
         name: shots_file
-        description: File with a Measurement shots
+        description: file with measurements (01 format)
         data_type: file
-      - 
-        name: dense_layout
-        description: skip 0-frequency states
-        data_type: bool
-        default_value: true
       -
         name: width
         description: width in pixels
@@ -94,5 +105,5 @@ actions:
         default_value: 800
       - 
         name: image_file
-        description: file name to store histogram
+        description: file name to store a histogram
         data_type: str
