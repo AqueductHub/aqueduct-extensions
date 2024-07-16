@@ -37,7 +37,7 @@ def upload_to_aqueduct(
         api: API,
         experiment_id: str,
         file: str | Path):
-    """Upload a file to an Aqueduct.
+    """Upload a file to Aqueduct.
 
     Args:
         api (API): API instance
