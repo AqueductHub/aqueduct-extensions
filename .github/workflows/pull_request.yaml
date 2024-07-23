@@ -25,7 +25,6 @@ jobs:
 
       - name: Run extensions smoke tests
         run: >
-          echo "ok"
           # this will require accessible testing
           # environment
-          # sh ./tests/run_tests.sh
+          sh ./tests/run_tests.sh

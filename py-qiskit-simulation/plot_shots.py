@@ -1,11 +1,11 @@
 import os
-from tempfile import TemporaryDirectory
-from pathlib import Path
 from collections import Counter
-from pyaqueduct import API
-from qiskit.visualization import plot_histogram
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from files import get_file_from_aqueduct, upload_to_aqueduct
+from pyaqueduct import API
+from qiskit.visualization import plot_histogram
 
 
 def collect_as_dict(filename: str) -> dict:

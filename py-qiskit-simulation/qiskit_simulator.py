@@ -5,10 +5,10 @@ from tempfile import TemporaryDirectory
 import qiskit.providers.fake_provider
 import qiskit.qasm3
 import qiskit_aer.backends
+from files import get_file_from_aqueduct, save_content_to_aqueduct
 from pyaqueduct import API
 from qiskit import QuantumCircuit, transpile
 
-from files import get_file_from_aqueduct, save_content_to_aqueduct
 
 def simulate(
         qasm_circuit_filename: str,
