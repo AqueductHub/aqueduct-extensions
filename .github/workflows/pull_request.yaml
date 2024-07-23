@@ -2,7 +2,7 @@ name: Static Analysis and Tests
 
 on:
   push:
-    branches: [main, feat/*]
+    branches: [main]
   pull_request:
     branches: [main, feat/*]
   workflow_dispatch:
