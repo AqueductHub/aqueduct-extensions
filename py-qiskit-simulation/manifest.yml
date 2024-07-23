@@ -1,8 +1,8 @@
 name: "Qiskit simulator"
 description: >
   This extension simulates QASM v2 and v3
-  circuits with qiskit noisy and noiseless
-  backends
+  circuits with Qiskit noisy and noiseless
+  backends.
 authors: aqueduct@riverlane.com
 aqueduct_url: http://localhost:8000/
 
@@ -40,7 +40,7 @@ actions:
         name: image_file
         description: file name to store a histogram
         data_type: str
-        default: histogram.png
+        default_value: histogram.png
   - 
     name: Simulate QASM circuit
     description: >
@@ -70,7 +70,7 @@ actions:
     parameters:
       -
         name: experiment
-        description: experiment with the data
+        description: Experiment with the data
         data_type: experiment
       - 
         name: qasm_file
@@ -90,13 +90,13 @@ actions:
                  ]
       -
         name: qasm_version
-        description: Version of a QASM dialect
+        description: OpenQASM version
         data_type: select
         default_value: "v2"
         options: [ v2, v3 ]
       -
         name: memory
-        description: Save per-shot measurement results?
+        description: Save measurement in a file
         data_type: bool
         default_value: true
       -
@@ -106,6 +106,6 @@ actions:
         default_value: 1000
       - 
         name: result_file
-        description: file name to store measurements in, 01 format
+        description: File name to store measurements in, 01 format
         data_type: str
         default_value: results_01.txt
