@@ -1,0 +1,111 @@
+name: "Qiskit simulator"
+description: >
+  This extension simulates QASM v2 and v3
+  circuits with Qiskit noisy and noiseless
+  backends.
+authors: aqueduct@riverlane.com
+aqueduct_url: http://localhost:8000/
+
+actions:
+  -
+    name: Plot measurement shot distribution
+    description: >
+      Plots a classic Qiskit histogam with
+      shots distribution.
+
+    script: >
+      $python plot_shots.py
+
+    # arguments of the action
+    parameters:
+      -
+        name: experiment
+        description: experiment with the data
+        data_type: experiment
+      -
+        name: shots_file
+        description: file with measurements (01 format)
+        data_type: file
+      -
+        name: width
+        description: width in pixels
+        data_type: int
+        default_value: 1000
+      -
+        name: height
+        description: height in pixels
+        data_type: int
+        default_value: 800
+      -
+        name: image_file
+        description: file name to store a histogram
+        data_type: str
+        default_value: histogram.png
+  - 
+    name: Simulate QASM circuit
+    description: >
+      This action runs a QASM circuit on a selected simulator backend.
+      Simulation results are printed in little-endians format
+      and are compatible with STIM 01 measurements file format.
+
+      There are 4 ideal simulators which represent
+      noiseless backends: `AerSimulator`,
+      `StatevectorSimulator`, `QasmSimulator`, `UnitarySimulator`.
+      Note, that `AerSimulator` is the only simulator, which supports
+      classical feedback (i.e. conditinal gates, like `c_if(...)`).
+      There are also 5 noisy simulators, which represent real
+      quantum computers (their connectivity maps, native gates,
+      and noise models): `Fake5QV1`, `Fake7QPulseV1`, `Fake20QV1`,
+      `Fake27QPulseV1`, and `Fake127QPulseV1`. You will find read more about
+      these simulators in the
+      [official qiskit documentation
+      page](https://docs.quantum.ibm.com/api/qiskit/providers_fake_provider).
+      Corresponding QPU configurations are available in [qiskit source
+      code](https://github.com/Qiskit/qiskit/tree/stable/1.1/qiskit/providers/fake_provider/backends_v1).
+
+    script: >
+      $python qiskit_simulator.py
+
+    # arguments of the action
+    parameters:
+      -
+        name: experiment
+        description: Experiment with the data
+        data_type: experiment
+      - 
+        name: qasm_file
+        description: File with a QASM script
+        data_type: file
+      - 
+        name: simulator_type
+        description: Class name of a simulator
+        data_type: select
+        default_value: "AerSimulator"
+        # NB, AerSimulator is the only supporting
+        # classic feedback, i.e. c_if instructions.
+        options: [AerSimulator, StatevectorSimulator, 
+                  QasmSimulator, UnitarySimulator,
+                  Fake5QV1, Fake7QPulseV1, Fake20QV1,
+                  Fake27QPulseV1, Fake127QPulseV1,
+                 ]
+      -
+        name: qasm_version
+        description: OpenQASM version
+        data_type: select
+        default_value: "v2"
+        options: [ v2, v3 ]
+      -
+        name: memory
+        description: Save measurement in a file
+        data_type: bool
+        default_value: true
+      -
+        name: shots
+        description: Number of shots
+        data_type: int
+        default_value: 1000
+      - 
+        name: result_file
+        description: File name to store measurements in, 01 format
+        data_type: str
+        default_value: results_01.txt
